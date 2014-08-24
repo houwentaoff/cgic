@@ -1,7 +1,7 @@
 #include "cgic.h"
 
 int cgiMain() {
-	cgiWriteEnvironment("/CHANGE/THIS/PATH/capcgi.dat");
+	cgiWriteEnvironment("/tmp/capcgi.dat");
 	cgiHeaderContentType("text/html");
 	fprintf(cgiOut, "<title>Captured</title>\n");
 	fprintf(cgiOut, "<h1>Captured</h1>\n");

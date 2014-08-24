@@ -28,7 +28,7 @@ extern char *cgiRequestMethod;
 extern char *cgiPathInfo;
 extern char *cgiPathTranslated;
 extern char *cgiScriptName;
-extern char *cgiQueryString;
+extern char *cgiQueryString;/*get 命令 中的str,长度由 cgiContentLength决定*/
 extern char *cgiRemoteHost;
 extern char *cgiRemoteAddr;
 extern char *cgiAuthType;

@@ -1,4 +1,4 @@
-CFLAGS=-g -Wall
+CFLAGS=-g -Wall -DDEBUG -DCGICDEBUG
 CC=gcc
 AR=ar
 RANLIB=ranlib
@@ -6,11 +6,13 @@ LIBS=-L./ -lcgic
 
 all: libcgic.a cgictest.cgi capture
 
-install: libcgic.a
-	cp libcgic.a /usr/local/lib
-	cp cgic.h /usr/local/include
-	@echo libcgic.a is in /usr/local/lib. cgic.h is in /usr/local/include.
+#install: libcgic.a
+#	cp libcgic.a /usr/local/lib
+#	cp cgic.h /usr/local/include
+#	@echo libcgic.a is in /usr/local/lib. cgic.h is in /usr/local/include.
 
+install: cgictest.cgi
+	cp cgictest.cgi /var/www/cgi-bin/
 libcgic.a: cgic.o cgic.h
 	rm -f libcgic.a
 	$(AR) rc libcgic.a cgic.o

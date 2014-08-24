@@ -12,7 +12,7 @@
 #define CGICDEBUGSTART \
 	{ \
 		FILE *dout; \
-		dout = fopen("/home/boutell/public_html/debug", "a"); \
+		dout = fopen("/tmp/debug", "a"); \
 	
 #define CGICDEBUGEND \
 		fclose(dout); \
@@ -90,16 +90,16 @@ typedef enum {
 	VALUES. Make local copies if modifications are desired. */
 
 typedef struct cgiFormEntryStruct {
-        char *attr;
+        char *attr;/*元素中的属性*/
 	/* value is populated for regular form fields only.
 		For file uploads, it points to an empty string, and file
 		upload data should be read from the file tfileName. */ 
-	char *value;
+	char *value;/*属性的值*/
 	/* When fileName is not an empty string, tfileName is not null,
 		and 'value' points to an empty string. */
 	/* Valid for both files and regular fields; does not include
 		terminating null of regular fields. */
-	int valueLength;
+	int valueLength;/*值的长度 */
 	char *fileName;	
 	char *contentType;
 	/* Temporary file name for working storage of file uploads. */
@@ -143,6 +143,12 @@ int main(int argc, char *argv[]) {
 		copy it to a buffer. */
 	e = getenv("CONTENT_TYPE");
 	if (e) {
+#ifdef CGICDEBUG
+        CGICDEBUGSTART
+        fprintf(dout, "==>%s:line[%d], e[%s]\n", __func__, __LINE__, e);
+        CGICDEBUGEND	
+#endif /* CGICDEBUG */
+        
 		if (strlen(e) < sizeof(cgiContentTypeData)) {
 			strcpy(cgiContentType, e);
 		} else {
@@ -276,7 +282,7 @@ int main(int argc, char *argv[]) {
 			fprintf(dout, "GetFormInput failed\n");
 			CGICDEBUGEND	
 #endif /* CGICDEBUG */
-			cgiHeaderStatus(500, "Error reading form data");
+			cgiHeaderStatus(500, "Error reading form data");/*Sean Hou: 1.500 Internal Server Error 该状态码表明服务器端在执行请求时发生错误。 */
 			cgiFreeResources();
 			return -1;
 		} else {	
@@ -456,6 +462,13 @@ static cgiParseResultType cgiParsePostMultipartInput() {
 	} else if (result != cgiParseSuccess) {
 		return result;
 	}
+ /* :TODO:Saturday, August 23, 2014 06:46:12 HKT:SeanHou: print mpp->Putback 怎么会打印 Cof 这个字符串???在发送报文中都不存在 这个报文 */
+#ifdef CGICDEBUG
+		CGICDEBUGSTART
+		fprintf(dout, "Sean :line[%d]mpp buf[%s]\n", __LINE__, mpp->putback);
+		CGICDEBUGEND
+#endif /* CGICDEBUG */
+ /* :TODO:End---  */
 	while (1) {
 		char d[1024];
 		char fvalue[1024];
@@ -486,6 +499,14 @@ static cgiParseResultType cgiParsePostMultipartInput() {
 		while (readHeaderLine(
 				mpp, attr, sizeof(attr), value, sizeof(value))) 
 		{
+ /* :TODO:Saturday, August 23, 2014 06:46:12 HKT:SeanHou: print mpp->Putback 怎么会打印 Cof 这个字符串???在发送报文中都不存在 这个报文 */
+#ifdef CGICDEBUG
+		CGICDEBUGSTART
+		fprintf(dout, "Sean :line[%d]mpp buf[%s]\n", __LINE__, mpp->putback);
+		CGICDEBUGEND
+#endif /* CGICDEBUG */
+ /* :TODO:End---  */
+
 			char *argNames[3];
 			char *argValues[2];
 			/* Content-Disposition: form-data; 
@@ -592,6 +613,16 @@ static cgiParseResultType cgiParsePostMultipartInput() {
 			goto outOfMemory;
 		}
 		strcpy(n->tfileName, tfileName);
+ /* :TODO:Saturday, August 23, 2014 07:34:21 HKT:SeanHou:  */
+#ifdef CGICDEBUG
+		CGICDEBUGSTART
+		fprintf(dout, "Sean :line[%d]n->attr[%s]value[%s]lenth[%d]"
+                "filename[%s]contenttype[%s]tfilename[%s]\n", __LINE__,
+                n->attr, n->value, n->valueLength, n->fileName,
+                n->contentType, n->tfileName);
+		CGICDEBUGEND
+#endif /* CGICDEBUG */
+ /* :TODO:End---  */
 
 		l = n;			
 	}	
@@ -1072,12 +1103,23 @@ static cgiParseResultType cgiParseFormInput(char *data, int length) {
 		}	
 		n->tfileName[0] = '\0';
 		n->next = 0;
-		if (!l) {
+		if (!l) {/*根本都没有赋值,一直为NULL:在for 循环中赋值的:l动first指针不动的链表*/
 			cgiFormEntryFirst = n;
 		} else {
 			l->next = n;
 		}
 		l = n;
+ /* :TODO:Saturday, August 23, 2014 07:34:21 HKT:SeanHou:  */
+#ifdef CGICDEBUG
+		CGICDEBUGSTART
+		fprintf(dout, "Sean :line[%d]n->attr[%s]value[%s]lenth[%d]"
+                "filename[%s]contenttype[%s]tfilename[%s]\n", __LINE__,
+                n->attr, n->value, n->valueLength, n->fileName,
+                n->contentType, n->tfileName);
+		CGICDEBUGEND
+#endif /* CGICDEBUG */
+ /* :TODO:End---  */
+
 		if (!foundAmp) {
 			break;
 		}			
@@ -1165,7 +1207,7 @@ static void cgiFreeResources() {
 		free(c->fileName);
 		free(c->contentType);
 		if (strlen(c->tfileName)) {
-			unlink(c->tfileName);
+			unlink(c->tfileName);/*rm file */
 		}
 		free(c->tfileName);
 		free(c);
@@ -1412,7 +1454,7 @@ cgiFormResultType cgiFormStringMultiple(
 			strcpy(stringArray[i], e->value);
 			cgiFormEntryString(e, stringArray[i], max, 1);
 			i++;
-		} while ((e = cgiFormEntryFindNext()) != 0); 
+		} while ((e = cgiFormEntryFindNext()) != 0); /*find next value same, always is NULL */
 		*result = stringArray;
 #ifdef CGICDEBUG
 		CGICDEBUGSTART
@@ -1833,6 +1875,15 @@ static char *months[] = {
 	"Dec"
 };
 
+/**
+ * @brief expires cookies 的结束时间 服务器生成，客户端保存cookies文件
+ *
+ * @param name
+ * @param value
+ * @param secondsToLive
+ * @param path http://www.zdnet.com/devhead/filters/ 和http://www.zdnet.com/devhead/stories/共享cookies，就要把path设成“/devhead” 主目录所有的共享，则 path 设置为 / 
+ * @param domain 和DNS中的domain 一样，使之 *.domain 也被匹配.这样设置的Cookies，所有*.domain都能访问！对path路径属性的一个延伸
+ */
 void cgiHeaderCookieSetString(char *name, char *value, int secondsToLive,
 	char *path, char *domain)
 {
@@ -1863,6 +1914,12 @@ void cgiHeaderCookieSetString(char *name, char *value, int secondsToLive,
 		gt->tm_min,
 		gt->tm_sec,
 		path);
+#ifdef CGICDEBUG
+		CGICDEBUGSTART
+		fprintf(dout, "==>%s:line[%d]path[%s] day[%s]\n", __func__, __LINE__, path, days[gt->tm_wday]);
+		CGICDEBUGEND
+#endif /* CGICDEBUG */
+    
 }
 
 void cgiHeaderLocation(char *redirectUrl) {
