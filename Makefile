@@ -1,10 +1,14 @@
-CFLAGS=-g -Wall -DDEBUG -DCGICDEBUG
-CC=gcc
+SUBDIRS=sample
+
+include lib.rules
+
 AR=ar
 RANLIB=ranlib
+
 LIBS=-L./ -lcgic
 
-all: libcgic.a cgictest.cgi capture
+all: libcgic.a cgictest.cgi capture ./sample/login.cgi
+		for d in $(SUBDIRS); do [ -d $$d ] && $(MAKE) -C $$d; done
 
 #install: libcgic.a
 #	cp libcgic.a /usr/local/lib
@@ -12,13 +16,11 @@ all: libcgic.a cgictest.cgi capture
 #	@echo libcgic.a is in /usr/local/lib. cgic.h is in /usr/local/include.
 
 install: cgictest.cgi
-	cp cgictest.cgi /var/www/cgi-bin/
+	cp cgictest.cgi $(DESTDIR)
 libcgic.a: cgic.o cgic.h
 	rm -f libcgic.a
 	$(AR) rc libcgic.a cgic.o
 	$(RANLIB) libcgic.a
-
-#mingw32 and cygwin users: replace .cgi with .exe
 
 cgictest.cgi: cgictest.o libcgic.a
 	gcc cgictest.o -o cgictest.cgi ${LIBS}
@@ -26,6 +28,11 @@ cgictest.cgi: cgictest.o libcgic.a
 capture: capture.o libcgic.a
 	gcc capture.o -o capture ${LIBS}
 
+sample/login.cgi:libcgic.a sample/login.o
+	$(MAKE) -C sample 
+
 clean:
+	for d in $(SUBDIRS); do [ -d $$d ] && $(MAKE) -C $$d clean; done
 	rm -f *.o *.a cgictest.cgi capture
+
 
