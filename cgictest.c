@@ -24,6 +24,20 @@
 #include <string.h>
 #include <stdlib.h>
 
+#if CGICDEBUG
+#define CGICDEBUGSTART \
+	{ \
+		FILE *dout; \
+		dout = fopen("/tmp/cgictest_debug", "a"); \
+	
+#define CGICDEBUGEND \
+		fclose(dout); \
+	}
+#else /* CGICDEBUG */
+#define CGICDEBUGSTART
+#define CGICDEBUGEND
+#endif /* CGICDEBUG */
+
 void HandleSubmit();
 void ShowForm();
 void CookieSet();
@@ -43,9 +57,22 @@ void LoadEnvironment();
 void SaveEnvironment();
 
 int cgiMain() {
-#ifdef DEBUG
-	LoadEnvironment();
-#endif /* DEBUG */
+
+    int page_index=0;
+    
+    if (cgiFormIntegerBounded("page", &page_index, 1, 5, 0) != cgiFormSuccess)
+    {
+        return (-1);
+    }
+
+#ifdef CGICDEBUG
+    CGICDEBUGSTART
+    fprintf(dout, "==>%s:line[%d], page_index[%d]\n", __func__, __LINE__, page_index);
+    CGICDEBUGEND	
+#endif /* CGICDEBUG */ 
+//#ifdef DEBUG
+//	LoadEnvironment();
+//#endif /* DEBUG */
 	/* Load a previously saved CGI scenario if that button
 		has been pressed. */
 	if (cgiFormSubmitClicked("loadenvironment") == cgiFormSuccess) {

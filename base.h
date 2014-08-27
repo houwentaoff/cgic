@@ -1,13 +1,13 @@
 /*
  * =====================================================================================
  *       Copyright (c), 2013-2020, Goke.
- *       Filename:  page.h
+ *       Filename:  base.h
  *
- *    Description:  
+ *    Description: 
  *         Others:
  *   
  *        Version:  1.0
- *        Date:  2014/8/26 19:34:15
+ *        Date:  2014/8/27 15:55:32
  *       Revision:  none
  *       Compiler:  xxx-gcc
  *
@@ -17,17 +17,12 @@
  *
  * =====================================================================================
  */
-#ifndef  __PAGE_H__
-#define  __PAGE_H__
+#ifndef __BASE_H__
+#define __BASE_H__
 
+extern  const char * head_html;/*Sean Hou:  */
+extern  const char * body_html;
+extern  const char * foot_html;
+extern  const char * head_footHtml;
 
-
-extern int   view_page();
-extern int   enc_page();
-extern int   pm_page();
-extern int   osd_page();
-extern int   sys_page();
-
-
-#endif//__PAGE_H__
-
+#endif
