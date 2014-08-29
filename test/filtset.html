@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+<head>
+<title>Ambarella IPCAM Setting</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<script language="JavaScript" src="../js/AJAXInteraction.js"></script>
+<script language="JavaScript" src="../js/page.js"></script>
+<script language="JavaScript" src="../js/style.js"></script>
+<link rel="stylesheet" type="text/css" href="../css/amba.css"/>
+<style type="text/css"><!--
+
+#container, #top { width:800px; }
+#content { margin:0 20px 0 200px; }
+
+--></style>
+</head>
+<body onload="javascript: getData('enc')" >
+<div id="container" class="subcont">
+    <div id="top">
+        <table border="0" cellpadding="0" cellspacing="0" height="40">
+            <tr>
+                <td align="center" width="160"><img src="../img/logo1.gif" alt="logo" /></td>
+                <td align="center" width="640">&nbsp; &nbsp;<p class="style2">Ambarella IPCam</p></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="sitename" class="setting">
+        <div id="title"></div>
+    </div>
+    <div id="wrap">
+        <div id="menunav"><p>
+            <a class="nav">Live View</a><span class="hide"> | </span>
+            <a class="nav sub active" href="/cgi-bin/live_view.cgi?streamId=0">Main</a><span class="hide"> | </span>
+            <a class="nav sub active" href="/cgi-bin/live_view.cgi?streamId=1">Secondary</a><span class="hide"> | </span>
+            <a class="nav sub active" href="/cgi-bin/live_view.cgi?streamId=2">Third</a><span class="hide"> | </span>
+            <a class="nav sub active" href="/cgi-bin/live_view.cgi?streamId=3">Fourth</a><span class="hide"> | </span>
+            <a class="nav active" href="/cgi-bin/webdemo.cgi?page=enc">Camera Setting</a><span class="hide"> | </span>
+            <a class="nav sub active" href="/cgi-bin/webdemo.cgi?page=enc">Encode Setting</a><span class="hide"> | </span>
+            <a class="nav sub" href="/cgi-bin/webdemo.cgi?page=pm">Privacy Mask</a><span class="hide"> | </span>
+            <a class="nav sub" href="/cgi-bin/webdemo.cgi?page=osd">OSD Setting</a><span class="hide"> | </span>
+            <a class="nav sub" href="/cgi-bin/webdemo.cgi?page=csb">VinVout</a><span class="hide"> | </span>
+            <a class="nav" href="/cgi-bin/webdemo.cgi?page=iqb">Image Quality</a><span class="hide"> | </span>
+            </p>
+            <p>&nbsp; </p>
+        </div>
+        <div id="content">
+            <div id="status">&nbsp; </div>
+            <p class="style1">Note: Stream resolutions should be in the descending order.</p>
+            <br>
+            <label for="enc_mode">Encode Mode :</label><select id="enc_mode" onchange="setEncodeMode(this.options[this.selectedIndex].value)">
+                <option value=0 selected>Normal mode</option>
+                <option value=1 >High Mega-pixel mode</option>
+                <option value=2 >Low delay mode</option>
+            </select>
+
+
+
+            <br><br>
+            <fieldset><legend>Stream 0</legend><br>
+                <label for="s0_type">Type :</label><select id="s0_type" >
+                    <option value=0 >OFF</option>
+                    <option value=1 selected>H.264</option>
+                    <option value=2 >MJPEG</option>
+                </select>
+                &nbsp; &nbsp; <label for="s0_enc_fps">Encode FPS :</label><select id="s0_enc_fps" >
+                    <option value=8533333 >60</option>
+                    <option value=17066667 selected>30</option>
+                    <option value=20480000 >25</option>
+                    <option value=25600000 >20</option>
+                    <option value=34133333 >15</option>
+                    <option value=51200000 >10</option>
+                    <option value=85333333 >6</option>
+                    <option value=102400000 >5</option>
+                    <option value=128000000 >4</option>
+                    <option value=170666667 >3</option>
+                    <option value=256000000 >2</option>
+                    <option value=512000000 >1</option>
+                </select>
+                &nbsp; &nbsp; <label for="s0_dptz">DPTZ Type :</label><select id="s0_dptz" >
+                    <option value=0 selected>Disable</option>
+                    <option value=1 >Enable</option>
+                </select>
+                <br><br>
+                <label for="s0_resolution">Resolution :</label><select id="s0_resolution" onchange="setDPTZMode(this.options[this.selectedIndex].value, 0)" >
+                    <option value=125830200 >1920 x1080</option>
+                    <option value=94372920 >1440 x1080</option>
+                    <option value=83887104 >1280 x1024</option>
+                    <option value=83887040 >1280 x 960</option>
+                    <option value=83886800 selected>1280 x 720</option>
+                    <option value=52429400 > 800 x 600</option>
+                    <option value=47186496 > 720 x 576</option>
+                    <option value=47186400 > 720 x 480</option>
+                    <option value=41943520 > 640 x 480</option>
+                    <option value=23068960 > 352 x 288</option>
+                    <option value=23068912 > 352 x 240</option>
+                    <option value=20971760 > 320 x 240</option>
+                    <option value=11534480 > 176 x 144</option>
+                    <option value=11534456 > 176 x 120</option>
+                    <option value=10485880 > 160 x 120</option>
+                </select>
+                &nbsp; &nbsp; <label for="s0_flip_rotate">Flip & Rotate :</label><select id="s0_flip_rotate" >
+                    <option value=0 selected>Normal</option>
+                    <option value=1 >Horizontal Flip</option>
+                    <option value=2 >Vertical Flip</option>
+                    <option value=4 >Rotate Clockwise 90</option>
+                    <option value=3 >Rotate 180</option>
+                    <option value=7 >Rotate Clockwise 270</option>
+                </select>
+                <br><br><div class="expandstyle"><span id="stream0" onClick="expandEncodeFormat('stream0', 'setting0', 360, 0)"><img src="../img/expand.gif" /></span>Stream settings :<br><br>
+                    <div class="expandcontent" id="setting0"><fieldset><legend>H.264</legend><br><label for="s0_M" id="s0_M_l">M (1-3) :</label>
+                            <input type="text" class="textinput" id="s0_M" value="1" maxlength=1  />
+                            &nbsp; &nbsp;<label for="s0_N" id="s0_N_l">N (1-255) :</label>
+                            <input type="text" class="textinput" id="s0_N" value="30" maxlength=3  />
+                            <br><br><label for="s0_idr_interval" id="s0_idr_interval_l">IDR interval (1-100) :</label>
+                            <input type="text" class="textinput" id="s0_idr_interval" value="1" maxlength=4  />
+                            <br><br><label for="s0_profile">Profile :</label><select id="s0_profile" >
+                                <option value=0 selected>Main</option>
+                                <option value=1 >Baseline</option>
+                            </select>
+                            <br><br><label for="s0_brc">Bitrate control :</label><select id="s0_brc" onchange="setBRCMode(this.options[this.selectedIndex].value, 0)" >
+                                <option value=0 selected>CBR</option>
+                                <option value=1 >VBR</option>
+                                <option value=2 >CBR (keep quality)</option>
+                                <option value=3 >VBR (keep quality)</option>
+                            </select>
+                            <br><br><label for="s0_cbr_avg_bps" id="s0_cbr_avg_bps_l">Average Bitrate  :</label>
+                            <input type="text" class="textinput" id="s0_cbr_avg_bps" value="4000000" maxlength=10  />
+                            <br><br><label for="s0_vbr_min_bps" id="s0_vbr_min_bps_l">Min bitrate (bps) :</label>
+                            <input type="text" class="textinput" id="s0_vbr_min_bps" value="1000000" maxlength=10 disabled />
+                            &nbsp; &nbsp; <label for="s0_vbr_max_bps" id="s0_vbr_max_bps_l">Max bitrate (bps) :</label>
+                            <input type="text" class="textinput" id="s0_vbr_max_bps" value="6000000" maxlength=10 disabled />
+                            <br></fieldset><br><fieldset><legend>MJPEG</legend><br><label for="s0_quality" id="s0_quality_l">Quality (0 - 100) :</label>
+                            <input type="text" class="textinput" id="s0_quality" value="50" maxlength=4  />
+                            <br></fieldset><br></div></div></fieldset><br>
+
+
+
+            <p align="center" >
+            <input type="button" value="Apply" onclick = "javascript:setEnc()"/>&nbsp; &nbsp; 
+            <input type="button" value="Cancel" onclick = "javascript:showPage('enc')"/>
+            </p>
+
+        </div>
+        <div class="clearingdiv">&nbsp; </div>
+    </div>
+
+</div>
+<div id="footer">
+    Copyright &copy 2011 Ambarella Inc. All right reserved.
+</div>
+</body>
+</html>

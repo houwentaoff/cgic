@@ -1,0 +1,25 @@
+<html>
+<head>
+<script language="JavaScript" src="../js/jquery.js"></script>
+<script language="JavaScript" src="../js/page.js"></script>
+
+</head>
+<body>
+
+<label for="s1_type">Type :</label>
+<select id="s1_type" onchange="enableItem(this.id, 'disabled')">
+<option value=0 >OFF</option>
+<option value=1 selected>H.264</option>
+<option value=2 >MJPEG</option>
+</select>
+
+<script>
+function enableItem(name, enableString)
+{
+    var item = $(name);
+    item.disabled = enableString;
+}
+</script>
+
+</body>
+</html>
