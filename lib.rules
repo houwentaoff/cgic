@@ -17,13 +17,15 @@ CFLAGS = -O2 -Wall -g
 endif
 
 #path
-CGIC_TOP=/home/other/ipc/amba_sdk/cgic
+CGIC_TOP=/home/work/work_ext/ipc/gk7101/customer/juanvision/ambarella/app/ipcam/web_branch/cgic
 
 CFLAGS += -I$(CGIC_TOP) -L$(CGIC_TOP) -lcgic
 #debug
 CFLAGS += -DDEBUG -DCGICDEBUG
 
 DESTDIR=/var/www/cgi-bin/
+
+V=1
 
 Q=@
 E=echo

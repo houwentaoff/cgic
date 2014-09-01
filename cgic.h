@@ -202,6 +202,9 @@ extern int cgiMain();
 extern cgiFormResultType cgiFormEntries(
 	char ***ptrToStringArray);
 
+extern cgiFormResultType cgiSetFormSelectSingle(
+    char *name, char **choicesText, int choicesTotal, 
+	int defaultV);
 /* Output string with the <, &, and > characters HTML-escaped. 
 	's' is null-terminated. Returns cgiFormIO in the event
 	of error, cgiFormSuccess otherwise. */
@@ -227,6 +230,7 @@ cgiFormResultType cgiValueEscape(char *s);
 	bytes in 'data'. Returns cgiFormIO in the event
 	of error, cgiFormSuccess otherwise. */
 cgiFormResultType cgiValueEscapeData(char *data, int len);
+
 
 #endif /* CGI_C */
 

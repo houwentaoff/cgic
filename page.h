@@ -20,7 +20,25 @@
 #ifndef  __PAGE_H__
 #define  __PAGE_H__
 
+#define LABEL_OPTION_LEN 32
+typedef struct {
+	unsigned int value;/* usually increase */
+//	char option[LABEL_OPTION_LEN];
+    char label[LABEL_OPTION_LEN];
+}Label_Option;
 
+typedef struct {
+	char* label;/*label name */
+    char* name;/*label 'for name', select id*/
+    union {
+        char *name;
+        char *id;
+    }bind;
+	Label_Option* options;
+	int option_num;
+	unsigned int value;/* selected value*/
+	char* action;
+}select_Label;
 
 extern int   view_page();
 extern int   enc_page();

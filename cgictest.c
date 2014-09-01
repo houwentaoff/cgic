@@ -59,12 +59,14 @@ void SaveEnvironment();
 int cgiMain() {
 
     int page_index=0;
-    
+ /* :TODO:2014/8/29 10:02:06:Sean:  测试登陆 后传递的page参数,使用其他功能时将它屏蔽*/
+#if 0
     if (cgiFormIntegerBounded("page", &page_index, 1, 5, 0) != cgiFormSuccess)
     {
         return (-1);
     }
-
+#endif
+ /* :TODO:End---  */
 #ifdef CGICDEBUG
     CGICDEBUGSTART
     fprintf(dout, "==>%s:line[%d], page_index[%d]\n", __func__, __LINE__, page_index);

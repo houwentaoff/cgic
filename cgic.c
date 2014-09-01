@@ -2593,3 +2593,30 @@ cgiFormResultType cgiValueEscape(char *s)
 }
 
 
+/*-----------------------------------------------------------------------------
+ *  Set form widget
+ *-----------------------------------------------------------------------------*/
+cgiFormResultType cgiSetFormSelectSingle(
+    char *name, char **choicesText, int choicesTotal, 
+	int defaultV) 
+{
+    int i=0;
+
+    fprintf(cgiOut, "<br>\n");
+    fprintf(cgiOut, "<select name=\"%s\">\n", name);
+    for(i=0; i<choicesTotal; i++)
+    {
+        if (defaultV != i)/*优化*/
+        {
+            fprintf(cgiOut, "<option value=\"%d\">%s\n", i, choicesText[i]);
+        }
+        else
+        {
+            fprintf(cgiOut, "<option value=\"%d\" selected=\"selected\" >%s\n", i, choicesText[i]);
+        }
+    }
+    fprintf(cgiOut, "</select>\n");
+
+	return cgiFormSuccess;
+}
+

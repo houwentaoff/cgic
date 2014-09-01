@@ -1,4 +1,4 @@
-SUBDIRS=sample
+SUBDIRS=sample src
 
 include lib.rules
 
