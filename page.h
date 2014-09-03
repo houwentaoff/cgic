@@ -24,7 +24,7 @@
 typedef struct {
 	unsigned int value;/* usually increase */
 //	char option[LABEL_OPTION_LEN];
-    char label[LABEL_OPTION_LEN];
+    char *label;//[LABEL_OPTION_LEN];
 }Label_Option;
 
 typedef struct {
@@ -36,7 +36,7 @@ typedef struct {
     }bind;
 	Label_Option* options;
 	int option_num;
-	unsigned int value;/* selected value*/
+	unsigned int selected;/* selected value*/
 	char* action;
 }select_Label;
 
