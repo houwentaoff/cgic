@@ -20,18 +20,25 @@
 //#include <page.h>
 #include "include.h"
 
-#define MAXSTRLEN 128
-#define SMALLHTML 1024            /*  */
+#define MAXSTRLEN 256               /*错误通常由此引起 */
+#define SMALLHTML (6*1024)            /*  */
 
 static int create_select_label(char * text, select_Label* select_label)
 {
-    char* label_format_title = "<label for=\"%s\">%s</label><select id=\"%s\" %s>\n";
+    char* label_format_title = "<label for=\"%s\">%s</label><select id=\"%s\" ";
     int num = select_label->option_num;
-
-
     char label_string[MAXSTRLEN] = {0};
+
+    FUN_IN();     
+
     sprintf(label_string, label_format_title, \
-            select_label->bind.name, select_label->label, select_label->bind.id, select_label->action);
+            select_label->bind.name, select_label->label, select_label->bind.id);
+    if (select_label->action)
+    {
+        sprintf(label_string + strlen(label_string), "onchange =\"%s\"", select_label->action);
+    }
+    strcat(label_string, ">\n");
+
     strncat(text, label_string, strlen(label_string));
 
     char* option_string_format = "<option value=%d%s>%s</option>\n";
@@ -50,21 +57,9 @@ static int create_select_label(char * text, select_Label* select_label)
     }
     char* label_format_end = "</select>\n";
     strncat(text, label_format_end, strlen(label_format_end));
- /* :TODO:2014/9/1 17:47:39:Sean:  又上替代*/
-#if 0
-    fprintf(cgiOut, "<br>\n");
-    fprintf(cgiOut, "<label for=\"s0_type\">Type :</label>\n");
-    fprintf(cgiOut, "<select id = \"s0_type\">\n");
-    fprintf(cgiOut, "<option value=\"0\">OFF\n");
-    fprintf(cgiOut, "<option value=\"1\">H264\n");
-    fprintf(cgiOut, "<option value=\"2\">MJPEG\n");
-    fprintf(cgiOut, "</select>\n");
 
-    char *choicesText[]={"OFF", "H264", "MJPEG"};
-    cgiSetFormSelectSingle("s0_type", choicesText, sizeof(choicesText)/sizeof(char *) - 1, -1)
-#endif
- /* :TODO:End---  */
-        return (0);
+    FUN_OUT();     
+    return (0);
 }
 
 int   view_page()
@@ -72,6 +67,7 @@ int   view_page()
 
     return (0);
 }
+
 
 int   enc_page()
 {
@@ -82,27 +78,28 @@ int   enc_page()
     char *s0_enc_fps[]    = {"60", "30", "25", "20", "15", "10", "6", "5", "4", "3", "2", "1"};
     char *s0_dptz[]       = {"Disable", "Enable"};
     char *s0_resolution[] = {"1920 x1080", "1440 x1080", "1280 x1024", "1280 x 960",
-        "1280 x 720", " 800 x 600", " 720 x 576", " 720 x 480", " 640 x 480",
+        "1280 x 720", "800 x 600", "720 x 576", "720 x 480", "640 x 480",
         "352 x 288", "352 x 240", "320 x 240", "176 x 144", "176 x 120",
-        " 160 x 120",
+        "160 x 120",
     };
+    char *s0_flip_rotate[] = {"Normal", "Horizontal Flip", "Vertical Flip", "Rotate Clockwise 90", "Rotate 180", "Rotate Clockwise 270"};
 
-//    char *((* (labels[]))[]);
-//    char *labels[5]={enc_mode,}
+    char **labels[]={s0_type, s0_enc_fps, s0_dptz, s0_resolution, s0_flip_rotate};
     
     /*-----------------------------------------------------------------------------
      *  select
      *-----------------------------------------------------------------------------*/
+    select_Label select_labeltop    =
+    {
+        .label      = "Encode Mode :",    
+        .bind.id    = "enc_mode",
+        .options    = NULL,
+        .option_num = 3,
+        .selected   = 2,
+        .action     = "setEncodeMode(this.options[this.selectedIndex].value)",
+    };//top
     select_Label select_label[5] =
     {
-        {
-            .label      = "Encode Mode :",    
-            .bind.id    = "enc_mode",
-            .options    = NULL,
-            .option_num = 3,
-            .selected   = 2,
-            .action     = "setEncodeMode(this.options[this.selectedIndex].value)",
-        },
         {
             .label      = "Type :",    
             .bind.id    = "s0_type",
@@ -123,7 +120,7 @@ int   enc_page()
             .label      = "DPTZ Type :",    
             .bind.id    = "s0_dptz",
             .options    = NULL,
-            .option_num = 12,
+            .option_num = 2,
             .selected   = 2,
             .action     = NULL,
         },
@@ -131,35 +128,103 @@ int   enc_page()
             .label      = "Resolution :",    
             .bind.id    = "s0_resolution",
             .options    = NULL,
-            .option_num = 12,
+            .option_num = 15,
             .selected   = 2,
             .action     = NULL,
         },            
-            
+        {
+            .label      = "Flip & Rotate :",    
+            .bind.id    = "s0_flip_rotate",
+            .options    = NULL,
+            .option_num = 6,
+            .selected   = 2,
+            .action     = NULL,
+        },                       
     };
-
+	char* fieldset_begin = "<fieldset><legend>%s</legend><br>\n";
+	char* fieldset_end   = "<br><br></fieldset><br>\n";
+    
     FUN_IN();     
+
 /*init select*/
+    text = (char *)malloc(SMALLHTML);
+    if (!text)
+    {
+        PRINT_ERR("text is null\n");
+    }    
+    select_labeltop.options = (Label_Option *)malloc(select_labeltop.option_num * sizeof(Label_Option));
+    /*top  enc_mode*/
+    for (i = 0; i<select_labeltop.option_num;i++)
+    {
+        (select_labeltop.options+i)->value = i;
+        (select_labeltop.options+i)->label = enc_mode[i];/*mark*/
+    }
+    create_select_label(text, &select_labeltop);
+
+    /*other  select*/
     for (j = 0;j<5;j++)
     {
         select_label[j].options = (Label_Option *)malloc(select_label[j].option_num * sizeof(Label_Option));
         for (i = 0; i<select_label[j].option_num;i++)
         {
             (select_label[j].options+i)->value = i;
-            (select_label[j].options+i)->label = s0_resolution[i];/*mark*/
+            (select_label[j].options+i)->label = labels[j][i];/*mark*/
         }
     }
+
     /*stream 0*/
-    text = (char *)malloc(SMALLHTML);
-    if (!text)
-    {
-        PRINT_ERR("text is null\n");
-    }
+    strncat(text, "<br><br>", strlen("<br><br>"));
+    sprintf(text+strlen(text), fieldset_begin, "Stream 0");
+    
     for (i=0;i<5;i++)
     {
+        if (i == 3)
+        {
+            strncat(text, "<br><br>", strlen("<br><br>"));
+        }
         create_select_label(text, &select_label[i]);
     }
+	strncat(text, fieldset_end, strlen(fieldset_end));
+    /*stream 0 over*/
+
+    /*stream 1*/
+    strncat(text, "<br><br>", strlen("<br><br>"));
+    sprintf(text+strlen(text), fieldset_begin, "Stream 1");
+    
+    for (i=0;i<5;i++)
+    {
+        if (i == 3)
+        {
+            strncat(text, "<br><br>", strlen("<br><br>"));
+        }
+        create_select_label(text, &select_label[i]);
+    }
+	strncat(text, fieldset_end, strlen(fieldset_end));
+    /*stream 1 over*/    
+#if 1
+    /*stream 2*/
+    strncat(text, "<br><br>", strlen("<br><br>"));
+    sprintf(text+strlen(text), fieldset_begin, "Stream 2");
+    
+    for (i=0;i<5;i++)
+    {
+        if (i == 3)
+        {
+            strncat(text, "<br><br>", strlen("<br><br>"));
+        }
+        create_select_label(text, &select_label[i]);
+    }
+	strncat(text, fieldset_end, strlen(fieldset_end));
+    /*stream 2 over*/
+#endif
+   char *button_buf = "<p align=\"center\" > \
+<input type=\"button\" value=\"Apply\" onclick = \"javascript:setEnc()\"/>&nbsp; &nbsp; \
+<input type=\"button\" value=\"Cancel\" onclick = \"javascript:showPage('enc')\"/>";
+    strncat(text, button_buf, strlen(button_buf));
     fprintf(cgiOut, "%s", text);
+    PRINT_DBG("size[%d]text[%s]\n",strlen(text), text);
+    free(text);
+    
 
     FUN_OUT();
 
