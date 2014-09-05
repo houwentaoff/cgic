@@ -25,21 +25,34 @@ typedef struct {
 	unsigned int value;/* usually increase */
 //	char option[LABEL_OPTION_LEN];
     char *label;//[LABEL_OPTION_LEN];
-}Label_Option;
+}option_t;
 
 typedef struct {
-	char* label;/*label name */
-    char* name;/*label 'for name', select id*/
+	char *label;/*label name */
+    char *name;/*label 'for name', select id*/
     union {
         char *name;
         char *id;
     }bind;
-	Label_Option* options;
+	option_t *options;
 	int option_num;
 	unsigned int selected;/* selected value*/
-	char* action;
-}select_Label;
+	char *action;
+}select_Label_t;
 
+typedef enum input_type{
+    BUTTON=0,
+}input_type_e;
+
+typedef struct {
+	char *id;
+    input_type_e type;
+	char *value;
+	char *action;
+    /*no use*/
+	char *name;
+	char *exprop;
+}input_t;
 extern int   view_page();
 extern int   enc_page();
 extern int   pm_page();

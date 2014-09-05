@@ -20,9 +20,10 @@
 #ifndef __BASE_H__
 #define __BASE_H__
 
-extern  const char * head_html;/*Sean Hou:  */
-extern  const char * body_html;
-extern  const char * foot_html;
-extern  const char * head_footHtml;
+extern  const char * const video_html;
+extern  const char * const head_html;/*Sean Hou:  */
+extern  const char * const body_html;
+extern  const char * const foot_html;
+extern  const char * const head_footHtml;
 
 #endif

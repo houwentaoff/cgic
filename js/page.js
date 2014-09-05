@@ -916,9 +916,10 @@ function OnLoadActiveX(hostname, stream_id, recvType, statSize, showStat)
                 }
             }
         }
-        if (!getVlcVersion()) doGo("rtsp://192.168.103.47/stream"+(stream_id+1));
+//        if (!getVlcVersion()) doGo("rtsp://192.168.103.47/stream"+(stream_id+1));//Sean
+        if (!getVlcVersion()) doGo("rtsp://" + window.location.host + ":8554/stream" + (stream_id+1));
     }
-    else
+    else//IE
     {
         if (window.ActiveXObject) {
             try {
@@ -981,7 +982,8 @@ function doGo(targetURL) {
             // just wait for it to finish its job
         }
         var options = [":rtsp-tcp"];
-        var itemId = vlc.playlist.add(targetURL,"",options);
+        var itemId = vlc.playlist.add(targetURL,"",options);//test by Sean
+        //var itemId = vlc.playlist.add("rtsp://" + window.location.host + ":8554/stream1","",options);
         options = [];
         if( itemId != -1 )
         {

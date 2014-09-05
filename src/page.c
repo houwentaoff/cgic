@@ -23,13 +23,21 @@
 #define MAXSTRLEN 256               /*错误通常由此引起 */
 #define SMALLHTML (6*1024)            /*  */
 
-static int create_select_label(char * text, select_Label* select_label)
+/**
+ * @brief 
+ *
+ * @param text
+ * @param select_label
+ *
+ * @return 
+ */
+static int create_select_label(char * text, select_Label_t* select_label)
 {
     char* label_format_title = "<label for=\"%s\">%s</label><select id=\"%s\" ";
     int num = select_label->option_num;
     char label_string[MAXSTRLEN] = {0};
 
-    FUN_IN();     
+//    FUN_IN();     
 
     sprintf(label_string, label_format_title, \
             select_label->bind.name, select_label->label, select_label->bind.id);
@@ -44,7 +52,7 @@ static int create_select_label(char * text, select_Label* select_label)
     char* option_string_format = "<option value=%d%s>%s</option>\n";
     char option_string[MAXSTRLEN] = {0};
     int i = 0;
-    for (i = 0; i < num; i++) 	{
+    for (i = 0; i < num; i++)   {
         memset(option_string, 0, sizeof(option_string));
         if (select_label->options[i].value == select_label->selected) {
             sprintf(option_string, option_string_format, select_label->options[i].value, \
@@ -58,12 +66,33 @@ static int create_select_label(char * text, select_Label* select_label)
     char* label_format_end = "</select>\n";
     strncat(text, label_format_end, strlen(label_format_end));
 
-    FUN_OUT();     
+//    FUN_OUT();     
     return (0);
 }
 
 int   view_page()
 {
+    char *text=NULL;
+    char *load_activeX = "onload=\"javascript: OnLoadActiveX('192.168.103.47', 0, 1, 0, 1);\"";/*Sean Hou: ip need to replace by js fun */
+    FUN_IN();
+    /*init display*/
+    text = (char *)malloc(SMALLHTML);/*6k may much small*/
+    if (!text)
+    {
+        PRINT_ERR("text is null\n");
+        return (GK_MEM_ERROR);
+    }        
+
+    sprintf(text, body_html, load_activeX);
+    strncat(text, video_html, strlen(video_html));
+
+    fprintf(cgiOut, "%s", text);
+
+    PRINT_DBG("size[%d]text[%s]\n",strlen(text), text);
+   
+    free(text);
+
+    FUN_OUT();
 
     return (0);
 }
@@ -89,7 +118,7 @@ int   enc_page()
     /*-----------------------------------------------------------------------------
      *  select
      *-----------------------------------------------------------------------------*/
-    select_Label select_labeltop    =
+    select_Label_t select_labeltop    =
     {
         .label      = "Encode Mode :",    
         .bind.id    = "enc_mode",
@@ -98,7 +127,7 @@ int   enc_page()
         .selected   = 2,
         .action     = "setEncodeMode(this.options[this.selectedIndex].value)",
     };//top
-    select_Label select_label[5] =
+    select_Label_t select_label[5] =
     {
         {
             .label      = "Type :",    
@@ -141,18 +170,19 @@ int   enc_page()
             .action     = NULL,
         },                       
     };
-	char* fieldset_begin = "<fieldset><legend>%s</legend><br>\n";
-	char* fieldset_end   = "<br><br></fieldset><br>\n";
+    char* fieldset_begin = "<fieldset><legend>%s</legend><br>\n";
+    char* fieldset_end   = "<br><br></fieldset><br>\n";
     
     FUN_IN();     
 
-/*init select*/
+    /*init select*/
     text = (char *)malloc(SMALLHTML);
     if (!text)
     {
         PRINT_ERR("text is null\n");
+        return (GK_MEM_ERROR);
     }    
-    select_labeltop.options = (Label_Option *)malloc(select_labeltop.option_num * sizeof(Label_Option));
+    select_labeltop.options = (option_t *)malloc(select_labeltop.option_num * sizeof(option_t));
     /*top  enc_mode*/
     for (i = 0; i<select_labeltop.option_num;i++)
     {
@@ -164,7 +194,7 @@ int   enc_page()
     /*other  select*/
     for (j = 0;j<5;j++)
     {
-        select_label[j].options = (Label_Option *)malloc(select_label[j].option_num * sizeof(Label_Option));
+        select_label[j].options = (option_t *)malloc(select_label[j].option_num * sizeof(option_t));
         for (i = 0; i<select_label[j].option_num;i++)
         {
             (select_label[j].options+i)->value = i;
@@ -184,7 +214,7 @@ int   enc_page()
         }
         create_select_label(text, &select_label[i]);
     }
-	strncat(text, fieldset_end, strlen(fieldset_end));
+    strncat(text, fieldset_end, strlen(fieldset_end));
     /*stream 0 over*/
 
     /*stream 1*/
@@ -199,7 +229,7 @@ int   enc_page()
         }
         create_select_label(text, &select_label[i]);
     }
-	strncat(text, fieldset_end, strlen(fieldset_end));
+    strncat(text, fieldset_end, strlen(fieldset_end));
     /*stream 1 over*/    
 #if 1
     /*stream 2*/
@@ -214,7 +244,7 @@ int   enc_page()
         }
         create_select_label(text, &select_label[i]);
     }
-	strncat(text, fieldset_end, strlen(fieldset_end));
+    strncat(text, fieldset_end, strlen(fieldset_end));
     /*stream 2 over*/
 #endif
    char *button_buf = "<p align=\"center\" > \
@@ -224,7 +254,6 @@ int   enc_page()
     fprintf(cgiOut, "%s", text);
     PRINT_DBG("size[%d]text[%s]\n",strlen(text), text);
     free(text);
-    
 
     FUN_OUT();
 

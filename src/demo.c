@@ -53,17 +53,17 @@ static GK_ErrorCode_e switchPage ()
     int page_index;
 
 //	if (cgiFormIntegerBounded("page", &page_index, VIEWPAGE, sizeof(page_list)/sizeof(char *), 0) != cgiFormSuccess)
-	if (cgiFormIntegerBounded("page", &page_index, VIEWPAGE, 5, 0) != cgiFormSuccess)
+	if (cgiFormIntegerBounded("page", &page_index, VIEWPAGE, PAGE_NUM-1, 0) != cgiFormSuccess)
     {
         PRINT_ERR("==>%s:line[%d], page_index[%d]\n", __func__, __LINE__, page_index);
         return (GK_CGI_ARGV_ERROR);/*防止绕过密码直接操作,需要通过首页登陆才能进入*/
     }
-    PRINT_DBG ("page_index[%d]\nhead_html[%s]\nfun[0x%x]", page_index, head_html, (unsigned int)(page_list[page_value]));
     page_value = page_index;	
 //	browser = getenv("HTTP_USER_AGENT");
-	fprintf(cgiOut, head_html, page_inf[page_index], "test page");
+    fprintf(cgiOut, head_html, page_inf[page_index], "test page");
+    PRINT_DBG ("page_index[%d]\nhead_html[%s]\nfun[0x%x]", page_index, head_html, (unsigned int)(page_list[page_value]));
     (page_list[page_value])();
-	fprintf(cgiOut, "</BODY>%s", foot_html);
+    fprintf(cgiOut, "</body>%s", foot_html);
 
     FUN_OUT();
 
