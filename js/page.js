@@ -917,7 +917,7 @@ function OnLoadActiveX(hostname, stream_id, recvType, statSize, showStat)
             }
         }
 //        if (!getVlcVersion()) doGo("rtsp://192.168.103.47/stream"+(stream_id+1));//Sean
-        if (!getVlcVersion()) doGo("rtsp://" + window.location.host + ":8554/stream" + (stream_id+1));
+        if (!getVlcVersion()) doGo("rtsp://" + window.location.host + ":554/stream" + (stream_id+1));
     }
     else//IE
     {

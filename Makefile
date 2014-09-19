@@ -2,8 +2,8 @@ SUBDIRS=sample src
 
 include lib.rules
 
-AR=ar
-RANLIB=ranlib
+#AR=ar
+#RANLIB=ranlib
 
 LIBS=-L./ -lcgic
 
@@ -23,10 +23,10 @@ libcgic.a: cgic.o cgic.h
 	$(RANLIB) libcgic.a
 
 cgictest.cgi: cgictest.o libcgic.a
-	gcc cgictest.o -o cgictest.cgi ${LIBS}
+	$(CC) cgictest.o -o cgictest.cgi ${LIBS}
 
 capture: capture.o libcgic.a
-	gcc capture.o -o capture ${LIBS}
+	$(CC) capture.o -o capture ${LIBS}
 
 sample/login.cgi:libcgic.a sample/login.o
 	$(MAKE) -C sample 
